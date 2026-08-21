@@ -1,0 +1,14 @@
+# Copy to terraform.tfvars and adjust. Every value has a sensible default,
+# so an empty file works too.
+
+# Any region with DynamoDB, Lambda, API Gateway and Cognito — i.e. all of them.
+region = "eu-north-1"
+
+project = "driftlog"
+environment  = "prod"
+
+# PriceClass_100 = North America + Europe, the cheapest CloudFront tier.
+cloudfront_price_class = "PriceClass_100"
+
+log_retention_days     = 14
+point_in_time_recovery = false

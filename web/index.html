@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="DriftLog turns your daily wandering into a living map of who you're becoming. Drop pins on feelings, not places."
+    />
+    <meta name="theme-color" content="#F5ECD7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1A1A2E" media="(prefers-color-scheme: dark)" />
+    <title>DriftLog — where is your compass pointing?</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="config.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <circle cx="24" cy="24" r="21" class="rose-ring" />
+          <circle cx="24" cy="24" r="15" class="rose-ring rose-ring--inner" />
+          <path d="M24 8 L28 22 L24 40 L20 22 Z" class="rose-needle" />
+          <path d="M24 8 L28 22 L20 22 Z" class="rose-needle-north" />
+          <circle cx="24" cy="24" r="2.4" class="rose-pivot" />
+        </svg>
+        <span class="brand-text">
+          <strong>DriftLog</strong>
+          <em>bearings on your inner landscape</em>
+        </span>
+      </div>
+
+      <div class="topbar-actions">
+        <button
+          id="theme-toggle"
+          class="icon-button"
+          type="button"
+          aria-live="polite"
+          title="Switch between day and night"
+        >
+          <span id="theme-icon" aria-hidden="true">☾</span>
+          <span id="theme-label" class="visually-hidden">Switch to night</span>
+        </button>
+        <button id="sign-out" class="ghost-button is-hidden" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ------------------------------ auth ------------------------------ -->
+      <section id="auth-view" class="view is-hidden" aria-labelledby="auth-heading">
+        <div class="card card--auth">
+          <h1 id="auth-heading" class="auth-heading">Find your bearing</h1>
+          <p class="auth-blurb">
+            Most compasses point you somewhere. DriftLog asks where you have already been —
+            emotionally. Drop a pin whenever something shifts, and watch the direction of your
+            life reveal itself.
+          </p>
+
+          <div class="tabs" role="tablist" aria-label="Sign in or create an account">
+            <button
+              id="tab-signin"
+              class="tab is-active"
+              role="tab"
+              type="button"
+              aria-selected="true"
+              aria-controls="panel-signin"
+            >
+              Sign in
+            </button>
+            <button
+              id="tab-signup"
+              class="tab"
+              role="tab"
+              type="button"
+              aria-selected="false"
+              aria-controls="panel-signup"
+            >
+              Create account
+            </button>
+          </div>
+
+          <form id="panel-signin" class="auth-form" role="tabpanel" aria-labelledby="tab-signin">
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+            <label class="field">
+              <span>Password</span>
+              <input type="password" name="password" autocomplete="current-password" required />
+            </label>
+            <button class="primary-button" type="submit">Sign in</button>
+          </form>
+
+          <form
+            id="panel-signup"
+            class="auth-form is-hidden"
+            role="tabpanel"
+            aria-labelledby="tab-signup"
+          >
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+            <label class="field">
+              <span>Password</span>
+              <input
+                type="password"
+                name="password"
+                autocomplete="new-password"
+                minlength="8"
+                required
+              />
+              <small class="hint">At least 8 characters, with an uppercase letter and a number.</small>
+            </label>
+            <button class="primary-button" type="submit">Create account</button>
+          </form>
+
+          <form id="panel-confirm" class="auth-form is-hidden">
+            <p class="hint">
+              We sent a six-digit code to <strong id="confirm-email"></strong>. Enter it to finish.
+            </p>
+            <label class="field">
+              <span>Confirmation code</span>
+              <input
+                type="text"
+                name="code"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                pattern="[0-9]*"
+                required
+              />
+            </label>
+            <button class="primary-button" type="submit">Confirm and sign in</button>
+            <button id="resend-code" class="link-button" type="button">Resend the code</button>
+          </form>
+
+          <p id="auth-message" class="message" role="alert"></p>
+        </div>
+      </section>
+
+      <!-- ------------------------------ app ------------------------------- -->
+      <section id="app-view" class="view is-hidden">
+        <div class="layout">
+          <!-- pin drop -->
+          <div class="card card--drop">
+            <h2 class="card-title">Drop a pin</h2>
+            <p class="card-sub">
+              No journal. No essay. Just a breadcrumb — a bearing on where you are right now.
+            </p>
+
+            <form id="pin-form">
+              <fieldset class="fieldset">
+                <legend>Which way did it point?</legend>
+                <div id="category-grid" class="category-grid"></div>
+              </fieldset>
+
+              <fieldset class="fieldset">
+                <legend>
+                  How strongly? <output id="intensity-out" class="intensity-out">3</output>
+                </legend>
+                <input
+                  id="intensity"
+                  class="slider"
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value="3"
+                  aria-describedby="intensity-out"
+                />
+                <div class="slider-scale" aria-hidden="true">
+                  <span>a flicker</span><span>a landmark</span>
+                </div>
+              </fieldset>
+
+              <label class="field">
+                <span>Two sentences. That's the whole job.</span>
+                <textarea
+                  id="note"
+                  name="note"
+                  rows="3"
+                  maxlength="280"
+                  required
+                  placeholder="Said the hard thing in standup instead of swallowing it. Hands shook, voice didn't."
+                ></textarea>
+                <small id="note-count" class="hint">280 left</small>
+              </label>
+
+              <button id="pin-submit" class="primary-button" type="submit">Set this bearing</button>
+              <p id="pin-message" class="message" role="status"></p>
+            </form>
+          </div>
+
+          <!-- compass rose + timeline -->
+          <div class="stack">
+            <div class="card card--rose">
+              <h2 class="card-title">Your rose, last 7 days</h2>
+              <div class="rose-wrap">
+                <svg
+                  id="rose"
+                  viewBox="0 0 320 260"
+                  role="img"
+                  aria-labelledby="rose-title rose-desc"
+                >
+                  <title id="rose-title">Compass rose of your recent pins</title>
+                  <desc id="rose-desc">
+                    Each spoke shows how often you logged that category in the last seven days.
+                  </desc>
+                </svg>
+              </div>
+              <p id="rose-summary" class="rose-summary">Drop your first pin to draw the rose.</p>
+            </div>
+
+            <div class="card card--timeline">
+              <div class="card-head">
+                <h2 class="card-title">Your drift</h2>
+                <button id="refresh" class="ghost-button" type="button">Refresh</button>
+              </div>
+              <ol id="timeline" class="timeline"></ol>
+              <p id="timeline-empty" class="empty-state">
+                Nothing logged yet. The map fills in one breadcrumb at a time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p id="boot-error" class="boot-error is-hidden"></p>
+    </main>
+
+    <footer class="footer">
+      <span>DriftLog — built for The Full Stack Challenge, on AWS.</span>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
